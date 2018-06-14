@@ -1,7 +1,8 @@
 Ping check a list of hosts
 ==========================
 
-*take a list of space or comma seperated hosts. accept also slurm node range expression*
+*take a list of space or comma seperated hosts and ping check them.*
+*accept also slurm node range expression*
 
 This script was tested using python3 3.6.3
 
