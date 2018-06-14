@@ -17,8 +17,9 @@ class Check:
         self.nprocs = args.nprocs
 
         hosts = [ self.convert(host) if "[" in host else host.split(',') for host in hosts ]
-        hosts = [ host for host in hosts if not host == ' ' ]
-        self.hosts = sorted(set(list(itertools.chain.from_iterable(hosts))))
+        hosts = list(itertools.chain.from_iterable(hosts))
+        hosts = [host for host in hosts if not host == ' ' and not host == '']
+        self.hosts = set(hosts)
 
     def ping(self, host):
         cmd = f'ping -w 1 -c 1 {host} > /dev/null 2>&1'
