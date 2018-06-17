@@ -6,6 +6,7 @@ import re
 import itertools
 import subprocess as sp
 import natsort
+import sys
 
 delim = ","
 
@@ -15,11 +16,23 @@ class Check:
         parser.add_argument('-n', '--nprocs', help='Run in parallel on <NPROCS> processes', type=int, action='store', default=32)
         args, hosts = parser.parse_known_args()
         self.nprocs = args.nprocs
+        if len(hosts) == 0:
+            self.usage()
 
         hosts = [ self.convert(host) if "[" in host else host.split(',') for host in hosts ]
         hosts = list(itertools.chain.from_iterable(hosts))
         hosts = [host for host in hosts if not host == ' ' and not host == '']
         self.hosts = set(hosts)
+
+    def usage(self):
+        print(f"""
+Usage : {sys.argv[0]} nodeA{{1..33}}
+        {sys.argv[0]} nodeA[37-39]
+        {sys.argv[0]} nodeA{{1..33}},nodeA{{34..36}}
+        {sys.argv[0]} nodeA{{34..36}}, nodeA[37-39] nodeA40
+        {sys.argv[0]} nodeA{{1..33}}, nodeA[37-39] nodeA40, nodeA41,nodeA42
+        {sys.argv[0]} nodeA{{1..33}} nodeA{{34..36}}, nodeA[37-39] nodeA40, nodeA41,nodeA42
+""")
 
     def ping(self, host):
         cmd = f'ping -w 1 -c 1 {host} > /dev/null 2>&1'
