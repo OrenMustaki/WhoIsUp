@@ -13,9 +13,18 @@ delim = ","
 class Check:
     def __init__(self):
         parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, description='', epilog='')
-        parser.add_argument('-n', '--nprocs', help='Run in parallel on <NPROCS> processes', type=int, action='store', default=32)
+        parser.add_argument('-n', '--nprocs', help='Run in parallel on <NPROCS> processes', type=int, action='store',
+                            default=32)
+        parser.add_argument('-s', '--slurm', help='List all slurm nodes using scontrol show node command',
+                            action='store_true', default=False)
         args, hosts = parser.parse_known_args()
         self.nprocs = args.nprocs
+        self.slurm = args.slurm
+
+        if self.slurm:
+            hosts = [line.split()[0].split("=")[-1] for line in sp.getoutput('scontrol show node').splitlines() if
+                     "NodeName=" in line]
+
         if len(hosts) == 0:
             self.usage()
 
